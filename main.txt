@@ -1,0 +1,344 @@
+# 1 -
+
+# '''A':['B','C','D'],'B':['E'],'C':['D','E'],'D':[],'E':[]'''
+
+graph = {}
+visited = set()
+visit = set()
+
+def dfs(visited, graph, root):
+    if root not in visited:
+        print(root, end='->')
+        visited.add(root)
+        for neighbour in graph[root]:
+            dfs(visited, graph, neighbour)
+
+def bfs(visited, graph, queue):
+    if not queue:
+        return
+
+    current_node = queue.pop(0)
+    print(current_node, end='->')
+
+    for neighbor in graph[current_node]:
+        if neighbor not in visited:
+            visited.add(neighbor)
+            queue.append(neighbor)
+
+    bfs(visited, graph, queue)
+
+n = int(input("Enter number of nodes: "))
+for i in range(n):
+    node = input("Node name: ")
+    C = input("Enter neighbor nodes: ")
+    if C and C != '':
+        C = C.split(' ')
+        graph[node] = C
+    else:
+        graph[node] = []
+
+dfs(visited, graph, 'A')
+print("\nBFS traversal:")
+bfs(visit, graph, ['A'])
+
+#---------------------------------------------------------------------------------------
+
+# 2 -
+
+def selection_sort(n):
+    for i in range(len(n)):
+        min_ind = i
+        for j in range(i+1, len(n)):
+            if n[j] < n[min_ind]:
+                min_ind = j
+        n[i], n[min_ind] = n[min_ind], n[i]
+    return n
+
+
+n = [34, 45, 12, 56, 1, 8]
+sorted_array = selection_sort(n)
+print(sorted_array)
+
+graph = [
+    [0, 4, 3, 0, 5],
+    [4, 0, 1, 7, 0],
+    [3, 1, 0, 4, 0],
+    [0, 7, 4, 0, 2],
+    [5, 0, 0, 2, 0]
+]
+print(graph)
+v = len(graph)
+
+visited = [0]*v
+
+no_edge = 0
+visited[0] = True
+
+while (no_edge < v-1):
+    min = float("inf")
+    x = y = 0
+    for i in range(v):
+        if visited[i]:
+            for j in range(v):
+                if ((not visited[j] and graph[i][j])):
+                    if graph[i][j] < min:
+                        min = graph[i][j]
+                        x, y = i, j
+    print(f"{x} - {y} :{graph[x][y]}")
+    visited[y] = True
+    no_edge += 1
+
+'''
+0  4  3  0  5
+4  0  1  7  0
+3  1  0  4  0
+0  7  4  0  2
+5  0  0  2  0
+'''
+
+
+
+#-------------------------------------------------------------------------------------------------
+
+# 3 -
+
+def selection_sort(n):
+    for i in range(len(n)):
+        min_ind = i
+        for j in range(i+1, len(n)):
+            if n[j] < n[min_ind]:
+                min_ind = j
+        n[i], n[min_ind] = n[min_ind], n[i]
+    return n
+
+
+def kruskal_mst(graph):
+    n = len(graph)
+    mst = []  # List to store the minimal spanning tree
+    edges = []  # List to store all the edges
+
+    # Create a list of edges with their corresponding weights
+    for i in range(n):
+        for j in range(i + 1, n):
+            if graph[i][j] != 0:
+                edges.append((i, j, graph[i][j]))
+
+    # Sort the edges by their weights in ascending order
+    def get_weight(edge):
+        return edge[2]
+    edges.sort(key=get_weight)
+
+    parent = list(range(n))
+
+    def find(v):
+        if parent[v] == v:
+            return v
+        return find(parent[v])
+
+    def union(v1, v2):
+        root1 = find(v1)
+        root2 = find(v2)
+        parent[root1] = root2
+
+    # Add edges to the MST, ensuring no cycles are formed
+    for edge in edges:
+        u, v, weight = edge
+        if find(u) != find(v):
+            mst.append((u, v, weight))
+            union(u, v)
+
+    return mst
+
+# Example usage:
+graph = [
+    [0, 2, 0, 6, 0],
+    [2, 0, 3, 8, 5],
+    [0, 3, 0, 0, 7],
+    [6, 8, 0, 0, 9],
+    [0, 5, 7, 9, 0]
+]
+
+minimal_spanning_tree = kruskal_mst(graph)
+for u, v, weight in minimal_spanning_tree:
+    print(f"Edge ({u}-{v}) with weight {weight}")
+
+
+# ------------------------------------------------------------------------------
+
+# 4 -
+
+def selection_sort(n):
+    for i in range(len(n)):
+        min_ind = i
+        for j in range(i+1, len(n)):
+            if n[j] < n[min_ind]:
+                min_ind = j
+        n[i], n[min_ind] = n[min_ind], n[i]
+    return n
+
+def dijkstra(graph, source):
+    v = len(graph)
+    distance = [float("inf")] * v
+    visited = [False] * v
+
+    distance[source] = 0
+
+    for _ in range(v - 1):
+        min_dist = float("inf")
+        for i in range(v):
+            if not visited[i] and distance[i] < min_dist:
+                min_dist = distance[i]
+                u = i
+
+        visited[u] = True
+
+        for j in range(v):
+            if not visited[j] and graph[u][j] and distance[u] + graph[u][j] < distance[j]:
+                distance[j] = distance[u] + graph[u][j]
+
+    return distance
+
+# Example usage:
+graph = [
+            [ 0, 4, 0, 0, 0, 0, 0, 8, 0 ],
+            [ 4, 0, 8, 0, 0, 0, 0, 11, 0 ],
+            [ 0, 8, 0, 7, 0, 4, 0, 0, 2 ],
+            [ 0, 0, 7, 0, 9, 14, 0, 0, 0 ],
+            [ 0, 0, 0, 9, 0, 10, 0, 0, 0 ],
+            [ 0, 0, 4, 14, 10, 0, 2, 0, 0 ],
+            [ 0, 0, 0, 0, 0, 2, 0, 1, 6 ],
+            [ 8, 11, 0, 0, 0, 0, 1, 0, 7 ],
+            [ 0, 0, 2, 0, 0, 0, 6, 7, 0]
+]
+source = 0
+
+shortest_distances = dijkstra(graph, source)
+
+for i, distance in enumerate(shortest_distances):
+    print(f"Shortest distance from {source} to {i} is {distance}")
+
+# -----------------------------------------------------------------------------------
+
+# 6 -
+
+def is_safe(graph, v, c, color):
+    # Check if it is safe to color vertex v with color c
+    for i in range(len(graph)):
+        if graph[v][i] and color[i] == c:
+            return False
+    return True
+
+def graph_coloring(graph, m):
+    n = len(graph)
+    color = [-1] * n  # Initialize color array
+
+    def branch_and_bound(v):
+        if v == n:
+            return True
+
+        for c in range(1, m + 1):
+            if is_safe(graph, v, c, color):
+                color[v] = c
+                if branch_and_bound(v + 1):
+                    return True
+                color[v] = -1  # Backtrack
+
+        return False
+
+    if not branch_and_bound(0):
+        return None  # No valid coloring found
+
+    return color
+
+# Example usage:
+graph = [
+    [0, 1, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 0, 1],
+    [1, 0, 1, 0]
+]
+
+m = 3  # Maximum number of colors
+coloring = graph_coloring(graph, m)
+
+if coloring:
+    print("Graph coloring:", coloring)
+else:
+    print("No valid coloring exists.")
+
+#---------------------------------------------------------------------
+
+# 7 -
+
+def is_safe(graph, v, c, color):
+    # Check if it is safe to color vertex v with color c
+    for i in range(len(graph)):
+        if graph[v][i] and color[i] == c:
+            return False
+    return True
+
+def graph_coloring(graph, m):
+    n = len(graph)
+    color = [-1] * n  # Initialize color array
+
+    def backtrack(v):
+        if v == n:
+            return True
+
+        for c in range(1, m + 1):
+            if is_safe(graph, v, c, color):
+                color[v] = c
+                if backtrack(v + 1):
+                    return True
+                color[v] = 0  # Backtrack
+
+        return False
+
+    if not backtrack(0):
+        return None  # No valid coloring found
+
+    return color
+
+# Example usage:
+graph = [
+    [0, 1, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 0, 1],
+    [1, 0, 1, 0]
+]
+
+m = 3  # Maximum number of colors
+coloring = graph_coloring(graph, m)
+
+if coloring:
+    print("Graph coloring:", coloring)
+else:
+    print("No valid coloring exists.")
+
+
+#-----------------------------------------------------------------------
+
+# 8 -
+
+import nltk
+from nltk.chat.util import Chat, reflections
+
+# Define patterns for the chatbot
+patterns = [
+    (r'hi|hello|hey', ['Hello!', 'Hi there!']),
+    (r'how are you', ['I am good, thank you. How are you?']),
+    (r'what is your name', ['I am a chatbot.']),
+    (r'bye|goodbye', ['Goodbye!', 'See you later.']),
+]
+
+# Create a chatbot with defined patterns
+chatbot = Chat(patterns, reflections)
+
+# Start the chat
+print("Hello! I'm a simple chatbot. You can type 'bye' to exit.")
+while True:
+    user_input = input("You: ")
+    response = chatbot.respond(user_input)
+    print("Chatbot:", response)
+    if user_input.lower() == 'bye':
+        break
