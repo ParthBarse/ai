@@ -1,47 +1,33 @@
-CREATE TABLE Stud (
-   Roll NUMBER PRIMARY KEY,
-   Att NUMBER,
-   Status VARCHAR2(2)
-);
+-- Consider table Stud(Roll, Att, Status) Write a PL/SQL block for following requirement and handle the exceptions. Roll no. of student will be entered by user. Attendance of roll no. entered by user will be checked in Stud table. If attendance is less than 75% then display the message “Term not granted” and set the status in stud table as “D”. Otherwise display message “Term granted” and set the status in stud table as “ND”
 
-INSERT INTO Stud (Roll, Att, Status)
-VALUES (101, 80, 'ND');
 
-INSERT INTO Stud (Roll, Att, Status)
-VALUES (102, 70, 'D');
+set serveroutput on;
 
-INSERT INTO Stud (Roll, Att, Status)
-VALUES (103, 90, 'ND');
+create table stud_main(
+   roll_no number(5),
+   attendance number(5),
+   status varchar(7));
 
-SET SERVEROUTPUT ON;
+Insert into stud_main(roll_no, attendance) values(101, 80);
+Insert into stud_main(roll_no, attendance) values(102, 65);
+Insert into stud_main(roll_no, attendance) values(103, 92);
+Insert into stud_main(roll_no, attendance) values(104, 55);
+Insert into stud_main(roll_no, attendance) values(105, 98);
 
-DECLARE
-   v_roll_number;
-   v_attendance;
-BEGIN
-   v_roll_number := &roll_number;
-
-   SELECT Att INTO v_attendance
-   FROM Stud
-   WHERE Roll = v_roll_number;
-
-   IF (v_attendance < 75) THEN
-      DBMS_OUTPUT.PUT_LINE('Term not granted');
-      UPDATE Stud
-      SET Status = 'D'
-      WHERE Roll = v_roll_number;
-   ELSE
-      DBMS_OUTPUT.PUT_LINE('Term granted');
-      UPDATE Stud
-      SET Status = 'ND'
-      WHERE Roll = v_roll_number;
-   END IF;
-   
-   COMMIT;
-EXCEPTION
-   WHEN NO_DATA_FOUND THEN
-      DBMS_OUTPUT.PUT_LINE('Roll number not found.');
-   WHEN OTHERS THEN
-      DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
-END;
+Declare
+   roll number(10);
+   att number(10);
+Begin
+   roll := &roll;
+   select attendance into att from stud_main where roll_no = roll;
+   if att < 75 then
+      dbms_output.put_line(roll||' is detained');
+      update stud_main set status='D' where roll_no=roll;
+   else 
+      dbms_output.put_line(roll||' is not detained');
+      update stud_main set status='ND' where roll_no=roll;
+   end if;
+   exception
+      when no_data_found then dbms_output.put_line(roll|| 'not found');
+end;
 /

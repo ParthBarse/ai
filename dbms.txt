@@ -1,3 +1,21 @@
+-- Q9.
+ 1.Account(Acc_no, branch_name,balance) branch(branch_name,branch_city,assets)
+customer(cust_name,cust_street,cust_city) Depositor(cust_name,acc_no)
+Loan(loan_no,branch_name,amount)
+Borrower(cust_name,loan_no)
+Solve following query:
+Create above tables with appropriate constraints like primary key, foreign key, check constrains,
+not null etc
+Q1. Find the names of all branches in loan relation.
+Q2. Find all loan numbers for loans made at Akurdi Branch with loan amount > 12000.
+Q3. Find all customers who have a loan from bank. Find their names, loan_no and loan amount.
+Q4. List all customers in
+alphabetical order who have loan from Akurdi branch.
+Q5. Find all customers who have an account or loan or both at bank. Q6. Find all customers who
+have both account and
+loan at bank.
+
+
 -- Create Branch table
 CREATE TABLE Branch (
     branch_name VARCHAR2(50) PRIMARY KEY,
@@ -115,7 +133,24 @@ SELECT cust_name
 FROM Customer
 WHERE cust_name IN (SELECT cust_name FROM Depositor) AND cust_name IN (SELECT cust_name FROM Borrower);
 
----------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------
+
+-- Q10 -
+
+
+Account(Acc_no, branch_name,balance) branch(branch_name,branch_city,assets)
+customer(cust_name,cust_street,cust_city) Depositor(cust_name,acc_no)
+Loan(loan_no,branch_name,amount)
+Borrower(cust_name,loan_no)
+Solve following query:
+Create above tables with appropriate constraints like primary key, foreign key, check constrains,
+not null etc
+Q1. Find all customers who have both account and loan at bank.
+Q2. Find all customer who have account but no loan at the bank.
+Q3. Find average account balance at Akurdi branch.
+Q4. Find the average account balance at each branch
+Q5. Find no. of depositors at each branch
+
 
 -- Q1. Find all customers who have both account and loan at the bank.
 
@@ -159,6 +194,20 @@ group by (branch_name);
 
 ----------------------------------------------------------
 
+-- Q 11 -
+
+Account(Acc_no, branch_name,balance) branch(branch_name,branch_city,assets)
+customer(cust_name,cust_street,cust_city) Depositor(cust_name,acc_no)
+Loan(loan_no,branch_name,amount)
+Borrower(cust_name,loan_no)
+Solve following query:
+Create above tables with appropriate constraints like primary key, foreign key, check constrains,
+not null etc
+Q1. Find the branches where average account balance > 12000.
+Q2. Find number of tuples in customer relation.
+Q3. Calculate total loan amount given by bank.
+Q4. Delete all loans with loan amount between 1300 and 1500
+
 -- Q1. Find the branches where average account balance > 12000.
 
 select branch_name from account
@@ -183,3 +232,290 @@ WHERE loan_no IN (
 );
 DELETE FROM Loan
 WHERE amount BETWEEN 1300 AND 1500;
+
+
+-------------------------------------------------------------------------------
+
+-- Q 12 -
+
+solve following join operations.
+a. Create following Tables
+cust_mstr(cust_no,fname,lname)
+add_dets(code_no,add1,add2,state,city,pincode)
+Retrieve the address of customer Fname as 'Ramesh' and Lname as 'Shinde'
+b.Create following Tables
+cust_mstr(custno,fname,lname)
+acc_fd_cust_dets(codeno,acc_fd_no)
+fd_dets(fd_sr_no,amt)
+List the customer holding fixed deposit of amount more than 5000
+c. Create following Tables
+emp_mstr(e_mpno,f_name,l_name,m_name,dept,desg,branch_no)
+branch_mstr(name,b_no)
+List the employee details along with branch names to which they belong
+
+
+-- a. Create following Tables cust_mstr(cust_no,fname,lname) add_dets_main(code_no,add1,add2,state,city,pincode) Retrieve the address of customer Fname as 'Ramesh' and Lname as 'Shinde'
+
+-- Create cust_mstr_main table
+CREATE TABLE cust_mstr_main (
+  cust_no NUMBER PRIMARY KEY,
+  fname VARCHAR2(50),
+  lname VARCHAR2(50)
+);
+
+-- Create add_dets_main table
+CREATE TABLE add_dets_main (
+  code_no NUMBER PRIMARY KEY,
+  add1 VARCHAR2(100),
+  add2 VARCHAR2(100),
+  state VARCHAR2(50),
+  city VARCHAR2(50),
+  pincode NUMBER
+);
+
+-- Insert sample data
+INSERT INTO cust_mstr_main (cust_no, fname, lname) VALUES (1, 'Ramesh', 'Shinde');
+
+INSERT INTO add_dets_main (code_no, add1, add2, state, city, pincode)
+VALUES (1, '123 Main St', 'Apt 4B', 'CA', 'Los Angeles', 90001);
+
+-- Retrieve the address of 'Ramesh Shinde'
+SELECT a.add1, a.add2, a.state, a.city, a.pincode
+FROM cust_mstr_main c
+JOIN add_dets_main a ON c.cust_no = code_no
+WHERE c.fname = 'Ramesh' AND c.lname = 'Shinde';
+
+-- b.Create following Tables cust_mstr(custno,fname,lname) acc_fd_cust_dets_main(codeno,acc_fd_no) fd_dets_main(fd_sr_no,amt) List the customer holding fixed deposit of amount more than 5000
+
+CREATE TABLE acc_fd_cust_dets_main (
+  codeno NUMBER PRIMARY KEY,
+  acc_fd_no NUMBER
+);
+
+CREATE TABLE fd_dets_main (
+  fd_sr_no NUMBER PRIMARY KEY,
+  amt NUMBER
+);
+
+CREATE TABLE cust_mstr_main (
+  cust_no NUMBER PRIMARY KEY,
+  fname VARCHAR2(50),
+  lname VARCHAR2(50)
+);
+
+
+INSERT INTO acc_fd_cust_dets_main (codeno, acc_fd_no) VALUES (1, 1001);
+INSERT INTO acc_fd_cust_dets_main (codeno, acc_fd_no) VALUES (2, 1002);
+INSERT INTO acc_fd_cust_dets_main (codeno, acc_fd_no) VALUES (3, 1003);
+
+INSERT INTO fd_dets_main (fd_sr_no, amt) VALUES (1, 6000);
+INSERT INTO fd_dets_main (fd_sr_no, amt) VALUES (2, 4500);
+INSERT INTO fd_dets_main (fd_sr_no, amt) VALUES (1003, 7000);
+
+INSERT INTO cust_mstr_main (cust_no, fname, lname) VALUES (1, 'John', 'Doe');
+INSERT INTO cust_mstr_main (cust_no, fname, lname) VALUES (2, 'Jane', 'Smith');
+INSERT INTO cust_mstr_main (cust_no, fname, lname) VALUES (3, 'Alice', 'Johnson');
+
+
+SELECT cm.cust_no, cm.fname, cm.lname
+FROM cust_mstr_main cm
+JOIN acc_fd_cust_dets_main acd ON cm.cust_no = acd.codeno
+JOIN fd_dets_main fd ON acd.acc_fd_no = fd.fd_sr_no
+WHERE fd.amt > 5000;
+
+-- c. Create following Tables emp_mstr(e_mpno,f_name,l_name,m_name,dept,desg,branch_no) branch_mstr(name,b_no) List the employee details along with branch names to which they belong
+
+CREATE TABLE emp_mstr_main (
+e_mpno INT PRIMARY KEY,
+f_name VARCHAR(20),
+l_name VARCHAR(20),
+m_name VARCHAR(20),
+dept VARCHAR(20),
+desg VARCHAR(20),
+branch_no INT
+);
+
+CREATE TABLE branch_mstr_main (
+name VARCHAR(20),
+b_no INT PRIMARY KEY
+);
+
+-- Insert sample data into emp_mstr_main
+INSERT INTO emp_mstr_main (e_mpno, f_name, l_name, m_name, dept, desg, branch_no)
+VALUES (1, 'John', 'Doe', 'M', 'HR', 'Manager', 101);
+INSERT INTO emp_mstr_main (e_mpno, f_name, l_name, m_name, dept, desg, branch_no)
+VALUES (2, 'Jane', 'Smith', 'A', 'Finance', 'Analyst', 102);
+INSERT INTO emp_mstr_main (e_mpno, f_name, l_name, m_name, dept, desg, branch_no)
+VALUES (3, 'Alice', 'Johnson', 'B', 'IT', 'Developer', 103);
+
+-- Insert sample data into branch_mstr_main
+INSERT INTO branch_mstr_main (name, b_no)
+VALUES ('Los Angeles', 101);
+INSERT INTO branch_mstr_main (name, b_no)
+VALUES ('New York', 102);
+INSERT INTO branch_mstr_main (name, b_no)
+VALUES ('San Francisco', 103);
+
+
+select e.f_name, e.l_name, e.e_mpno, e.dept, e.desg, b.name
+from emp_mstr_main e
+join branch_mstr_main b on e.branch_no=b.b_no;
+
+
+-------------------------------------------------------------------------------------------------------------
+
+
+-- Q 13 -
+
+Create Tables , Account(Acc_no, branch_name,balance) branch(branch_name,branch_city,assets)
+and solve following Queries.
+a) Create View on Account table by selecting any two columns and perform insert update delete
+operations
+b) Create view on Account and Branch table by selecting any one column from each table
+perform insert update delete operations
+c) create updateable view on Account table by selecting any two columns and perform insert
+update delete operations
+
+
+-- a) Create View on Account table by selecting any two columns and perform insert update delete operations
+
+-- Create a simple view on the Account table with two columns.
+CREATE VIEW AccountView AS
+SELECT acc_no, balance
+FROM Account;
+
+-- You can now perform DML operations on this view like it's a regular table.
+-- For example, you can insert a new record:
+INSERT INTO AccountView (acc_no, balance) VALUES (1001, 5000);
+
+-- Update a record in the view:
+UPDATE AccountView
+SET balance = 6000
+WHERE acc_no = 1001;
+
+-- Delete a record from the view:
+DELETE FROM AccountView
+WHERE acc_no = 1001;
+
+-- b) Create view on Account and Branch table by selecting any one column from each table perform insert update delete operations
+
+create view acc_and_brnch as
+select a.acc_no, b.branch_name
+from acc a
+join brnch b on b.branch_name=a.branch_name;
+
+update acc_and_brnch
+set acc_no = 105
+where branvh_name='Akurdi';
+where branvh_name='Akurdi'
+
+delete from acc_and_brnch
+where acc_no=105;
+
+-- c) create updateable view on Account table by selecting any two columns and perform insert update delete operations
+
+
+------------------------------------------------------------------------------------------------------
+
+-- Q 14 -
+
+-- Consider table Stud(Roll, Att, Status) Write a PL/SQL block for following requirement and handle the exceptions. Roll no. of student will be entered by user. Attendance of roll no. entered by user will be checked in Stud table. If attendance is less than 75% then display the message “Term not granted” and set the status in stud table as “D”. Otherwise display message “Term granted” and set the status in stud table as “ND”
+
+
+set serveroutput on;
+
+create table stud_main(
+   roll_no number(5),
+   attendance number(5),
+   status varchar(7));
+
+Insert into stud_main(roll_no, attendance) values(101, 80);
+Insert into stud_main(roll_no, attendance) values(102, 65);
+Insert into stud_main(roll_no, attendance) values(103, 92);
+Insert into stud_main(roll_no, attendance) values(104, 55);
+Insert into stud_main(roll_no, attendance) values(105, 98);
+
+Declare
+   roll number(10);
+   att number(10);
+Begin
+   roll := &roll;
+   select attendance into att from stud_main where roll_no = roll;
+   if att < 75 then
+      dbms_output.put_line(roll||' is detained');
+      update stud_main set status='D' where roll_no=roll;
+   else 
+      dbms_output.put_line(roll||' is not detained');
+      update stud_main set status='ND' where roll_no=roll;
+   end if;
+   exception
+      when no_data_found then dbms_output.put_line(roll|| 'not found');
+end;
+/
+
+
+--------------------------------------------------------------------------------------------------
+
+-- Q 15 -
+
+-- 
+
+
+create table borrower_main(
+    rollin int primary key,
+    name varchar(20),
+    dateofissue date,
+    nameofbook varchar(20),
+    status varchar(20)
+);
+
+create table fine(
+    rollno int,foreign key(rollno) 
+    references borrower_main(rollin),
+    returndate date,amount int
+);
+
+insert into borrower_main values(1,'abc','01-AUG-2017','SEPM','PEN');
+insert into borrower_main values(2,'xyz','01-JULY-2017','DBMS','PEN');
+insert into borrower_main values(3,'pqr','08-AUG-2015','DBMS','PEN');
+
+
+
+CREATE OR REPLACE PROCEDURE calc_fine_lib(p_roll IN NUMBER) AS
+    roll NUMBER := p_roll;
+    fine1 NUMBER;
+    noofdays INT;
+    issuedate DATE;
+BEGIN
+    -- Select the issue date for the provided roll number
+    SELECT dateofissue INTO issuedate FROM borrower_main WHERE rollin = roll;
+    
+    -- Calculate the number of days overdue
+    SELECT SYSDATE - issuedate INTO noofdays FROM dual;
+
+    -- Calculate the fine based on the number of days overdue
+    IF noofdays > 15 AND noofdays <= 30 THEN
+        fine1 := noofdays * 5;
+        dbms_output.put_line('FINE :'||fine1);
+    ELSIF noofdays > 30 THEN
+        fine1 := ((noofdays - 30) * 50) + (15 * 5);
+        dbms_output.put_line('FINE :'||fine1);
+    ELSE
+        fine1 := 0;
+        dbms_output.put_line('FINE :'||fine1);
+    END IF;
+
+    -- Insert the fine details into the fine table
+    INSERT INTO fine VALUES (roll, SYSDATE, fine1);
+    
+    -- Update the status in borrower_main
+    UPDATE borrower_main SET status = 'return' WHERE rollin = roll;
+    
+    COMMIT;
+END calc_fine_lib;
+/
+
+EXECUTE calc_fine_lib(1);
+
+
+--------------------------------------------------------------------------------------------------------
