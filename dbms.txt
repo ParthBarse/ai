@@ -1,0 +1,185 @@
+-- Create Branch table
+CREATE TABLE Branch (
+    branch_name VARCHAR2(50) PRIMARY KEY,
+    branch_city VARCHAR2(50) NOT NULL,
+    assets NUMBER(10, 2) NOT NULL
+);
+
+-- Create Account table
+CREATE TABLE Account (
+    acc_no NUMBER PRIMARY KEY,
+    branch_name VARCHAR2(50) REFERENCES Branch(branch_name),
+    balance NUMBER(10, 2) NOT NULL
+);
+
+-- Create Customer table
+CREATE TABLE Customer (
+    cust_name VARCHAR2(50) PRIMARY KEY,
+    cust_street VARCHAR2(100),
+    cust_city VARCHAR2(50)
+);
+
+-- Create Depositor table
+CREATE TABLE Depositor (
+    cust_name VARCHAR2(50) REFERENCES Customer(cust_name),
+    acc_no NUMBER REFERENCES Account(acc_no),
+    PRIMARY KEY (cust_name, acc_no)
+);
+
+-- Create Loan table
+CREATE TABLE Loan (
+    loan_no NUMBER PRIMARY KEY,
+    branch_name VARCHAR2(50) REFERENCES Branch(branch_name),
+    amount NUMBER(10, 2) NOT NULL
+);
+
+-- Create Borrower table
+CREATE TABLE Borrower (
+    cust_name VARCHAR2(50) REFERENCES Customer(cust_name),
+    loan_no NUMBER REFERENCES Loan(loan_no),
+    PRIMARY KEY (cust_name, loan_no)
+);
+
+
+-- Insert data into the Branch table
+INSERT INTO Branch (branch_name, branch_city, assets)
+VALUES ('Akurdi', 'Pune', 150000),
+       ('Hadapsar', 'Pune', 120000),
+       ('Kothrud', 'Pune', 100000);
+
+-- Insert data into the Account table
+INSERT INTO Account (acc_no, branch_name, balance)
+VALUES (101, 'Akurdi', 15000),
+       (102, 'Hadapsar', 20000),
+       (103, 'Kothrud', 18000);
+
+-- Insert data into the Customer table
+INSERT INTO Customer (cust_name, cust_street, cust_city)
+VALUES ('John', '123 Main St', 'Pune'),
+       ('Alice', '456 Elm St', 'Pune'),
+       ('Bob', '789 Oak St', 'Pune');
+
+-- Insert data into the Depositor table
+INSERT INTO Depositor (cust_name, acc_no)
+VALUES ('John', 101),
+       ('Alice', 102),
+       ('Bob', 103);
+
+-- Insert data into the Loan table
+INSERT INTO Loan (loan_no, branch_name, amount)
+VALUES (201, 'Akurdi', 15000),
+       (202, 'Hadapsar', 13000),
+       (203, 'Kothrud', 14000);
+
+-- Insert data into the Borrower table
+INSERT INTO Borrower (cust_name, loan_no)
+VALUES ('John', 201),
+       ('Alice', 202),
+       ('Bob', 203);
+
+-- Q1 - Find the names of all branches in the loan relation.
+
+SELECT DISTINCT branch_name FROM Loan;
+
+-- Q2. Find all loan numbers for loans made at Akurdi Branch with a loan amount > 12000.
+
+SELECT loan_no
+FROM Loan
+WHERE branch_name = 'Akurdi' AND amount > 12000;
+
+--Q3. Find all customers who have a loan from the bank. Find their names, loan_no, and loan amount.
+
+SELECT C.cust_name, L.loan_no, L.amount
+FROM Customer C
+JOIN Borrower B ON C.cust_name = B.cust_name
+JOIN Loan L ON B.loan_no = L.loan_no;
+
+-- Q4 List all customers in alphabetical order who have a loan from the Akurdi branch.
+
+SELECT C.cust_name
+FROM Customer C
+JOIN Borrower B ON C.cust_name = B.cust_name
+JOIN Loan L ON B.loan_no = L.loan_no
+WHERE L.branch_name = 'Akurdi'
+ORDER BY C.cust_name;
+
+-- Q5. Find all customers who have an account or loan or both at the bank.
+
+SELECT cust_name
+FROM Customer
+WHERE cust_name IN (SELECT cust_name FROM Depositor) OR cust_name IN (SELECT cust_name FROM Borrower);
+
+-- Q6. Find all customers who have both an account and a loan at the bank.
+
+SELECT cust_name
+FROM Customer
+WHERE cust_name IN (SELECT cust_name FROM Depositor) AND cust_name IN (SELECT cust_name FROM Borrower);
+
+---------------------------------------------------------
+
+-- Q1. Find all customers who have both account and loan at the bank.
+
+SELECT D.cust_name
+FROM Depositor D
+JOIN Borrower B ON D.cust_name = B.cust_name;
+
+-- OR
+
+select cust_name from customer
+where cust_name in (select cust_name from depositor) and cust_name in (select cust_name from borrower);
+
+
+-- Q2. Find all customers who have an account but no loan at the bank.
+
+SELECT D.cust_name
+FROM Depositor D
+LEFT JOIN Borrower B ON D.cust_name = B.cust_name
+WHERE B.cust_name IS NULL;
+
+-- OR
+
+select cust_name from customer
+where cust_name in (select cust_name from depositor) and cust_name not
+in (select cust_name from borrower);
+
+-- Q3. Find average account balance at Akurdi branch.
+
+select AVG(balance) from account
+where branch_name = 'Akurdi';
+
+-- Q4. Find the average account balance at each branch
+
+select AVG(balance), branch_name from account
+group by(branch_name);
+
+-- Q5. Find no. of depositors at each branch
+
+select branch_name,count(*) from account
+group by (branch_name);
+
+----------------------------------------------------------
+
+-- Q1. Find the branches where average account balance > 12000.
+
+select branch_name from account
+group by (branch_name)
+having AVG(balance) > 12000;
+
+-- Q2. Find number of tuples in customer relation.
+
+select count(*) from customer;
+
+-- Q3. Calculate total loan amount given by bank.
+
+select SUM(amount) from loan;
+
+-- Q4. Delete all loans with loan amount between 1300 and 1500.
+
+DELETE FROM Borrower
+WHERE loan_no IN (
+    SELECT loan_no
+    FROM Loan
+    WHERE amount BETWEEN 1300 AND 1500
+);
+DELETE FROM Loan
+WHERE amount BETWEEN 1300 AND 1500;
