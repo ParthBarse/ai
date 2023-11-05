@@ -1,53 +1,92 @@
-# def a_star_search(grid, start, goal):
-#     def heuristic(node):
-#         # A simple heuristic (Manhattan distance) for grid-based pathfinding
-#         return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
+class State:
+    def __init__(self, queens, n):
+        self.queens = queens  # Positions of queens in each row
+        self.n = n  # Board size
 
-#     open_set = [(0, start)]  # Priority queue with (f_cost, node) tuples
-#     came_from = {}  # Dictionary to store parent nodes
-#     g_score = {node: float('inf') for row in grid for node in row}
-#     g_score[start] = 0
+    def is_valid(self, row, col):
+        for r, c in enumerate(self.queens):
+            if c == col or abs(r - row) == abs(c - col):
+                return False
+        return True
 
-#     while open_set:
-#         open_set.sort(key=lambda x: x[0])
-#         current = open_set.pop(0)[1]
+    def get_children(self):
+        children = []
+        for col in range(self.n):
+            if self.is_valid(len(self.queens), col):
+                new_queens = self.queens + [col]
+                children.append(State(new_queens, self.n))
+        return children
 
-#         if current == goal:
-#             path = []
-#             while current in came_from:
-#                 path.append(current)
-#                 current = came_from[current]
-#             path.append(start)
-#             return list(reversed(path))
+    def heuristic(self):
+        conflicts = 0
+        for i in range(len(self.queens)):
+            for j in range(i + 1, len(self.queens)):
+                if self.queens[i] == self.queens[j] or abs(i - j) == abs(self.queens[i] - self.queens[j]):
+                    conflicts += 1
+        return conflicts
 
-#         for neighbor in [(current[0] + 1, current[1]), (current[0] - 1, current[1]),
-#                          (current[0], current[1] + 1), (current[0], current[1] - 1)]:
-#             if 0 <= neighbor[0] < len(grid) and 0 <= neighbor[1] < len(grid[0]) and grid[neighbor[0]][neighbor[1]] != 1:
-#                 tentative_g_score = g_score[current] + 1
+    def is_goal(self):
+        return len(self.queens) == self.n
 
-#                 if tentative_g_score < g_score.get(neighbor, float('inf')):
-#                     came_from[neighbor] = current
-#                     g_score[neighbor] = tentative_g_score
-#                     f_score = tentative_g_score + heuristic(neighbor)
-#                     open_set.append((f_score, neighbor))
+    def f(self):
+        return len(self.queens) + self.heuristic()
 
-#     return None  # No path found
 
-# # Example usage:
-# grid = [
-#     [0, 0, 0, 0, 0],
-#     [0, 1, 1, 0, 0],
-#     [0, 0, 0, 0, 1],
-#     [0, 1, 1, 1, 0],
-#     [0, 0, 0, 0, 0]
-# ]
+class AStarNQueens:
+    def __init__(self, n, start_row):
+        self.n = n
+        self.start_row = start_row
+        self.open_set = []
+        self.closed_set = set()
 
-# start = (0, 0)
-# goal = (4, 4)
+    def reconstruct_path(self, state):
+        return state.queens
 
-# path = a_star_search(grid, start, goal)
+    def get_min_f_state(self):
+        min_f = float('inf')
+        min_state = None
+        for f, state in self.open_set:
+            if f < min_f:
+                min_f = f
+                min_state = state
+        return min_state
 
-# if path:
-#     print("Path:", path)
-# else:
-#     print("No path found.")
+    def astar(self):
+        start_state = State([self.start_row], self.n)
+        self.open_set.append((start_state.f(), start_state))
+
+        while self.open_set:
+            current_state = self.get_min_f_state()
+            self.open_set.remove((current_state.f(), current_state))
+
+            if current_state.is_goal():
+                return self.reconstruct_path(current_state)
+
+            self.closed_set.add(tuple(current_state.queens))
+
+            for child in current_state.get_children():
+                if tuple(child.queens) in self.closed_set:
+                    continue
+
+                self.open_set.append((child.f(), child))
+
+        return None  # No solution found
+
+
+# Get user input for the size of the chessboard
+n = int(input("Enter the size of the chessboard (N): "))
+
+# Get user input for the row where they want to place the first queen
+start_row = int(input(f"Enter the row (0 to {n - 1}) to place the first queen: "))
+
+# Check if the start row is within the valid range
+if start_row < 0 or start_row >= n:
+    print("Invalid start row. Please choose a row within the board size.")
+else:
+    astar = AStarNQueens(n, start_row)
+    solution = astar.astar()
+
+    if solution:
+        print("Solution found:", solution)
+    else:
+        print("No solution found.")

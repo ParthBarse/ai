@@ -21,7 +21,7 @@ insert into borrower_main values(3,'pqr','08-AUG-2015','DBMS','PEN');
 
 
 
-CREATE OR REPLACE PROCEDURE calc_fine_lib(p_roll IN NUMBER) AS
+CREATE OR REPLACE PROCEDURE calc_fine_lib(p_roll NUMBER) AS
     roll NUMBER := p_roll;
     fine1 NUMBER;
     noofdays INT;
