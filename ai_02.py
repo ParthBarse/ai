@@ -7,6 +7,7 @@ def selection_sort(n):
         n[i], n[min_ind] = n[min_ind], n[i]
     return n
 
+# Time Complexity - O(n2)
 
 n = [34, 45, 12, 56, 1, 8]
 sorted_array = selection_sort(n)
@@ -20,6 +21,10 @@ print(sorted_array)
 #     [5, 0, 0, 2, 0]
 # ]
 # print(graph)
+
+
+
+#O(V2)
 
 graph=[]
 v=int(input("no of vertices:"))

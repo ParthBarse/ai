@@ -1,5 +1,7 @@
 # '''A':['B','C','D'],'B':['E'],'C':['D','E'],'D':[],'E':[]'''
 
+# Time Complexity - O(V + E)
+
 graph = {}
 visited = set()
 visit = set()

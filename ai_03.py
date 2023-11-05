@@ -1,3 +1,5 @@
+#O(E logE) or O(V logV
+
 def selection_sort(n):
     for i in range(len(n)):
         min_ind = i

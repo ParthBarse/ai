@@ -48,7 +48,7 @@
 # for i, distance in enumerate(shortest_distances):
 #     print(f"Shortest distance from {source} to {i} is {distance}")
 
-
+#O ( V 2 )
 def djikstras(graph, source):
     v = len(graph)
     distance = [float('inf')] * v
